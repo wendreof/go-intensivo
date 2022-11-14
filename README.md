@@ -1,9 +1,10 @@
-# go-intensivo
+# Crash Course - Golang: Performance and Multithreading with RabbitMQ
 
-## Crash Course - Golange Intensive
+### Starting RabbitMQ
+`docker-compose up -d`
 
-### Add packages
+### Adding the packages
 `go mod tidy`
 
-### How to test
+### Running tests
 `go test ./...`

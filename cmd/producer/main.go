@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"math/rand"
+	"time"
 
 	"github.com/google/uuid"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -57,7 +58,8 @@ func main() {
 	}
 	defer ch.Close()
 
-	for i:= 0; i<100; i++{
+	for i:= 0; i<1000; i++{
 		Publish(ch, GenerateOrders())
+		time.Sleep(300 * time.Millisecond)
 	} 
 }

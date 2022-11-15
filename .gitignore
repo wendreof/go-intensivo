@@ -15,4 +15,5 @@
 # vendor/
 
 #binaries
-server 
+server
+coverage

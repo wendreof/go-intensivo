@@ -34,7 +34,18 @@ func main() {
 	out := make(chan amqp.Delivery) // channel
 	go rabbitmq.Consume(ch, out)    // T2
 
-	for msg := range out {
+	forever := make(chan bool)
+	numberOfWorkers := 5
+
+	for i := 1; i <= numberOfWorkers; i++ {
+		go worker(out, &uc, i)
+	}
+	
+	<- forever
+}
+
+func worker(deliveryMessage <- chan amqp.Delivery, uc *usecase.CalculateFinalPriceUseCase, workerID int){
+		for msg := range deliveryMessage {
 		var inputDTO usecase.OrderInputDTO
 		err := json.Unmarshal(msg.Body, &inputDTO)
 
@@ -49,7 +60,9 @@ func main() {
 		}
 		
 		msg.Ack(false)
+		fmt.Printf("Worker %d has processed order %s", workerID, outputDTO.ID)
 		fmt.Println(outputDTO)
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(1 * time.Second)
 	}
 }
+

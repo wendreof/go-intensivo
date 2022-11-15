@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -34,14 +35,29 @@ func main() {
 	out := make(chan amqp.Delivery) // channel
 	go rabbitmq.Consume(ch, out)    // T2
 
-	forever := make(chan bool)
+	//forever := make(chan bool)
 	numberOfWorkers := 5
 
 	for i := 1; i <= numberOfWorkers; i++ {
 		go worker(out, &uc, i)
 	}
 	
-	<- forever
+	//<- forever
+	
+	http.HandleFunc("/total", func(w http.ResponseWriter, r *http.Request) {
+		getTotalUseCase := usecase.GetTotalUseCase{OrderRepository: repository}
+		total, err := getTotalUseCase.Execute()
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+		}
+
+		json.NewEncoder(w).Encode(total)
+
+	})
+	
+	http.ListenAndServe(":8080", nil)
 }
 
 func worker(deliveryMessage <- chan amqp.Delivery, uc *usecase.CalculateFinalPriceUseCase, workerID int){
@@ -65,4 +81,3 @@ func worker(deliveryMessage <- chan amqp.Delivery, uc *usecase.CalculateFinalPri
 		time.Sleep(1 * time.Second)
 	}
 }
-

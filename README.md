@@ -1,7 +1,10 @@
-# Crash Course - Golang: Performance and Multithreading with RabbitMQ
+# Crash Course - Golang: Performance and Multithreading with RabbitMQ, SQLite3, Prometheus and Grafana
 
 ### Starting RabbitMQ
 `docker-compose up -d`
+
+### Containerizing the app
+`docker build -t wendreof/go-intensivo:latest -f Dockerfile.prod .`
 
 ### Accessing services
 `http://localhost:15672/`
